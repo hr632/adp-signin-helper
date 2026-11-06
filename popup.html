@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ADP Sign-in Helper</title>
+<style>
+  :root { color-scheme: light dark; --ink: #1d1d1f; --ink-2: #6e6e73; --line: rgba(0,0,0,.1); --hover: rgba(0,0,0,.045); --red: #C30D23; }
+  @media (prefers-color-scheme: dark) { :root { --ink: #f5f5f7; --ink-2: #a1a1a6; --line: rgba(255,255,255,.12); --hover: rgba(255,255,255,.06); --red: #ff5a6a; } }
+  * { box-sizing: border-box; }
+  body { width: 380px; margin: 0; font: 13px/1.4 -apple-system, "Helvetica Neue", sans-serif; color: var(--ink); }
+  .bar { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-bottom: 1px solid var(--line); font-weight: 600; }
+  .bar img { width: 16px; height: 16px; border-radius: 4px; }
+  .head { padding: 14px 16px 12px; }
+  .head h1 { font-size: 16px; font-weight: 600; margin: 0 0 4px; }
+  .head p { margin: 0; color: var(--ink-2); }
+  button { display: block; width: 100%; text-align: left; font: inherit; color: inherit; background: none; border: 0; border-top: 1px solid var(--line); padding: 11px 16px; min-height: 44px; cursor: pointer; }
+  button:hover:not([disabled]) { background: var(--hover); }
+  button:focus-visible { outline: 2px solid var(--red); outline-offset: -2px; }
+  button[disabled] { color: var(--ink-2); cursor: default; }
+  button small { display: block; color: var(--ink-2); font-size: 12px; margin-top: 1px; }
+  #msg { padding: 10px 16px; color: var(--ink-2); border-top: 1px solid var(--line); }
+  #msg:empty { display: none; }
+  #msg.alert { color: var(--red); }
+</style>
+</head>
+<body>
+  <div class="bar"><img src="icons/icon32.png" alt="">ADP Sign-in Helper</div>
+  <div class="head">
+    <h1 id="status">Checking</h1>
+    <p id="sub">Touch ID is installed on the ADP sign-in screen when it loads. A 431 spinner is fixed on its own.</p>
+  </div>
+  <button id="wipe">Clear all ADP cookies and reload<small>Signs you out of other ADP tabs in this window.</small></button>
+  <button id="capture">Save Touch ID records from this screen<small id="capHint">Open the ADP sign-in screen in this tab first.</small></button>
+  <button id="details">Details and activity</button>
+  <div id="msg" role="status" aria-live="polite"></div>
+  <script src="popup.js"></script>
+</body>
+</html>
