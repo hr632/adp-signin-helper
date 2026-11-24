@@ -6,6 +6,8 @@
 //    in them), then reload that tab. Other tabs are never touched.
 //  - The popup button fires TIER 2: delete every adp.com cookie in that tab's
 //    cookie store and reload that tab. Only on user click.
+//  - Neither tier deletes the device-recognition cookies (KEEP below), so ADP
+//    still knows this device and does not ask for a code or security question.
 //  - Touch ID records are installed by content.js when the sign-in screen
 //    loads (online.adp.com/signin/*). They are captured from a sign-in screen
 //    only when the user clicks the popup button.
@@ -20,11 +22,17 @@ const lastTier1ByTab = new Map();
 const TIER1 = [
   /^_abck$/, /^bm_/, /^ak_bmsc$/, /^akavpau_/, /^bm_sz$/, /^bm_sv$/, /^bm_mi$/,
   /^dtCookie$/, /^dtPC$/, /^dtSa$/, /^dtLatC$/, /^rxVisitor$/, /^rxvt$/, /^MTRUID$/,
-  /^_pendo/, /^PMData$/, /^adp\.aim\.branding$/, /^OptanonConsent$/, /^OptanonAlertBoxClosed$/,
-  /^cf_clearance$/, /^_cs_/, /^_evga_/, /^_rdt_uuid$/, /^invoca_session$/, /^tmx_guid$/,
+  /^_pendo/, /^adp\.aim\.branding$/, /^OptanonConsent$/, /^OptanonAlertBoxClosed$/,
+  /^cf_clearance$/, /^_cs_/, /^_evga_/, /^_rdt_uuid$/, /^invoca_session$/,
   /^[A-Za-z0-9]{8}$/ // Shape-style opaque names such as k8Ksj346
 ];
-const isTier1 = (name) => TIER1.some((re) => re.test(name));
+// Device recognition, kept by both tiers: RSA Adaptive Authentication device
+// token (PMData), ThreatMetrix device IDs (tmx_guid, thx_guid), and the
+// remembered user ID. Small (under 1 KB together), so keeping them cannot
+// bring the overflow back.
+const KEEP = [/^PMData$/, /^tmx_guid$/, /^thx_guid$/, /^adp_user_id$/, /^adp_user_fname$/];
+const isKept = (name) => KEEP.some((re) => re.test(name));
+const isTier1 = (name) => !isKept(name) && TIER1.some((re) => re.test(name));
 
 // ---------- records ----------
 const nonEmpty = (r) => !!(r && Object.keys(r.userData || {}).length);
@@ -85,8 +93,8 @@ async function tier1(tabId, reason) {
 }
 
 async function tier2(tabId) {
-  const r = await clearCookies(await storeIdForTab(tabId), () => true);
-  await log("tier 2", `${r.removed} adp.com cookies (${r.bytes} B) cleared by button`);
+  const r = await clearCookies(await storeIdForTab(tabId), (c) => !isKept(c.name));
+  await log("tier 2", `${r.removed} adp.com cookies (${r.bytes} B) cleared by button, device cookies kept`);
   try { await chrome.tabs.reload(tabId); } catch (e) {}
   return r;
 }

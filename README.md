@@ -12,7 +12,7 @@ Open the listing and click **Add to Chrome**:
 
 https://chromewebstore.google.com/detail/oajdlbmpnekfidpicmhmhoodbjjpobhp
 
-The listing is unlisted, so it will not show up in store search; use the link. If the link shows "item not found", the store review is still in progress; use one of the two options below meanwhile.
+The listing is unlisted, so it will not show up in store search; use the link.
 
 **Release zip (no developer mode nag, no updates).**
 Download `adp-signin-helper-webstore.zip` from the latest release, unzip it somewhere permanent, then follow the unpacked steps below.
@@ -35,7 +35,7 @@ Chrome sync must be on in each profile for the record to arrive; otherwise it st
 ## How it behaves
 
 - **Monitor, always on.** Any HTTP 431 from an adp.com host, or an HTTP 400 on a page or script load there, fires tier 1 on that tab only: bot-detection, telemetry and branding cookies are deleted (no sign-in depends on them) and that one tab reloads. Other tabs are never touched. At most once per 30 seconds per tab.
-- **Full clear, on your click.** The popup's **Clear all ADP cookies and reload** deletes every adp.com cookie in that window and reloads the tab. It signs you out of other ADP products open in the same window, so it never runs on its own.
+- **Full clear, on your click.** The popup's **Clear all ADP cookies and reload** deletes every adp.com cookie in that window and reloads the tab, except the device-recognition cookies (`PMData`, `tmx_guid`, `thx_guid`, remembered user ID). Both tiers keep those, so ADP still recognizes the device and does not ask for a code or security question. It signs you out of other ADP products open in the same window, so it never runs on its own.
 - **Touch ID install, sign-in screen only.** The content script runs only on `online.adp.com/signin/*` and writes the record into the profile if it is missing. No other page, no cookies, no navigation.
 - **Capture, on your click only.** **Save Touch ID records from this screen** reads the record from a sign-in screen where Touch ID already works and keeps it in `chrome.storage.sync`.
 - **Details and activity** in the popup shows the saved accounts, a log of what the extension did, and export/import of the record as text.
@@ -53,6 +53,7 @@ Chrome sync must be on in each profile for the record to arrive; otherwise it st
 - It shares nothing between people. Records live in your own Google account; each person saves their own.
 - It contacts no server and touches no site other than adp.com. It opens no tabs and navigates nowhere.
 - It deletes no session cookies without your click.
+- It never deletes the cookies ADP uses to remember your device.
 
 ## Permissions
 

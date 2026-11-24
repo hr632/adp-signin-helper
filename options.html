@@ -48,7 +48,7 @@
     <dt>Monitors for the spinner</dt>
     <dd>ADP's sign-in page spins forever when the cookies set on adp.com outgrow what ADP's servers accept; they answer HTTP 431. The extension watches every adp.com response. On a 431 it deletes only the bot-detection, telemetry and branding cookies in that window (no sign-in depends on them) and reloads that one tab. Other tabs are never touched. At most once per 30 seconds per tab.</dd>
     <dt>Clears everything on your click</dt>
-    <dd>"Clear all ADP cookies and reload" in the popup deletes every adp.com cookie in that window and reloads the tab. This signs you out of other ADP products open in the same window, so it is never automatic.</dd>
+    <dd>"Clear all ADP cookies and reload" in the popup deletes every adp.com cookie in that window except the device-recognition ones, and reloads the tab. ADP still recognizes this device, so no code or security question. This signs you out of other ADP products open in the same window, so it is never automatic.</dd>
     <dt>Installs Touch ID on the sign-in screen</dt>
     <dd>ADP offers Touch ID only where it finds its own enrollment record in the browser profile's local storage: your user ID, the passkey's ID, an account ID, a device ID. It never checks the keychain. When the sign-in screen (online.adp.com/signin) loads, the extension writes the records it holds into that profile if they are missing. Nothing happens on any other page.</dd>
     <dt>Saves records on your click</dt>
